@@ -1,0 +1,78 @@
+body {
+	position:absolute;
+    top:30%;
+    left:30%;
+	background-color: sandybrown;
+}
+
+input[type=submit] {
+    background: #green;
+}
+
+
+a {
+    text-decoration: none;
+}
+
+a:active {
+    color: #0000FF;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th {
+    background: #afd792; 
+    color: #333;
+}
+
+.clearer {
+	clear: both;
+	display: block;
+	font-size: 0;
+	line-height: 0;
+}
+
+tr:hover {
+    background: #87CEEB;
+    color: #fff;
+}
+
+.myart {
+	float: left;
+	padding: 5px;
+	width: 300px;
+	border: solid 2px #008080;
+	text-align: center;
+	vertical-align: middle;
+	color: black;
+	font-size: 100%;
+}
+
+.mybutton {
+    float: left;
+    padding: 5px;
+    width: 150px;
+    border: solid 2px #008080;
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+}
+
+.mybutton2 {
+    float: left;
+    padding: 1px;
+    width: 100px;
+    height:30px;
+    border: solid 2px #008080;
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+}
+
+
+.mybutton:hover {
+    background: #87CEEB;
+    color: #fff;
+}

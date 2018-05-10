@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<project name="Awesome" basedir="." default="go">
+	<property name="name" value="Awesome"/>
+	<property name="db.dir" value="db"/>
+	<property name="db.driver" value="com.mysql.jdbc.Driver"/>
+	<property name="db.url" value="jdbc:mysql://localhost:3306/mydb"/>
+	<property name="db.user" value="qeqer"/>
+	<property name="db.pw" value="qeqer"/>
+	<property name="build.dir" value="build"/>
+	<property name="maindb.url" value="jdbc:mysql://localhost:3306"/>
+	<property name="testreports.dir" value="reports"/>
+	<property name="classes.dir" value="build/classes" />
+	<property name="weblib.dir" value="WebContent/WEB-INF/lib"/>
+	<property name="src.dir" value="src"/>
+	<property name="gf.dir" value="C:\glassfish4\glassfish\domains\domain1\autodeploy"/>
+	
+	<path id="build-classpath">
+		<fileset dir="${weblib.dir}" includes="*.jar" />
+		<fileset dir="${db.dir}" includes="*.jar" />
+	</path>
+		
+	<path id="test-classpath">
+		<pathelement location="${classes.dir}" />
+		<path refid="build-classpath" />
+	</path>
+	
+	<target name="dropDB">
+		<echo message="Dropping DB using: ${db.driver}" />
+		<sql driver="${db.driver}" url="${maindb.url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<classpath>
+				<fileset dir="${db.dir}">
+					<include name="mysql*.jar" />
+				</fileset>
+			</classpath>
+			<transaction src="${db.dir}/drop.sql" />
+		</sql>
+	</target>
+	
+	<target name="createTables">
+		<echo message="Creating DB using: ${db.driver}" />
+		<sql driver="${db.driver}" url="${maindb.url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<classpath>
+				<fileset dir="${db.dir}">
+					<include name="mysql*.jar" />
+				</fileset>
+			</classpath>
+			<transaction src="${db.dir}/create.sql" />
+		</sql>
+	</target>
+
+	<target name="insertDB">
+		<echo message="Initing tables using: ${db.driver} ${db.url}" />
+		<sql driver="${db.driver}" url="${maindb.url}" userid="${db.user}" password="${db.pw}">
+			<classpath>
+				<fileset dir="${db.dir}">
+					<include name="mysql*.jar" />
+				</fileset>
+			</classpath>
+			<transaction src="${db.dir}/init.sql" />
+		</sql>
+	</target>
+	
+	<target name = "reinit" depends = "stopserver, dropDB, createTables, insertDB, startserver">
+		<echo message = "Reinitializing DB"></echo>
+	</target>
+	
+	<target name="clean">
+		<echo message="Cleaning dirs" />
+		<delete dir="${build.dir}" />
+		<delete dir="${testreports.dir}"/>
+		<delete file="${name}.war" />
+		<delete dir="${gf.dir}" includes="*.war*"/>
+	</target>
+	
+	<target name="build" depends="clean">
+		<echo message="Compiling java files" />
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${testreports.dir}"/>
+		<mkdir dir="${classes.dir}" />
+		
+		<javac destdir="${classes.dir}" source="1.7" target="1.7" includeantruntime="false"
+			debug="true" deprecation="false" optimize="false" failonerror="true">
+	      	<src path="${src.dir}"/>
+	    	<classpath refid="build-classpath"/>
+		</javac>
+	  	<copy todir="${classes.dir}" preservelastmodified="true">
+	    	<fileset dir="${src.dir}/kek">
+	    	<include name="*.xml"/>
+	    	</fileset>
+	    </copy>
+		
+		<echo message="Building JAR file" />
+		<jar jarfile="${build.dir}/${name}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="kek.Main"/>
+			</manifest>
+			<fileset dir="${classes.dir}">
+				<include name="kek/*.*"/>
+				<include name="kekdao/*.*"/>
+				<include name="*.xml"/>
+			</fileset>
+		</jar>	  
+	</target>
+
+	<taskdef resource="testngtasks" classpath="${weblib.dir}/testng-6.8.jar"/>
+
+	<target name="testng" depends = "build, reinit">
+		<testng classpathref="test-classpath" outputDir="${testreports.dir}" verbose="2">
+			<classfileset dir="${classes.dir}" includes="kektest/*.class" />
+		</testng>
+	</target>
+	
+	<target name="stopserver">
+		<echo message="Stoping the server" />
+		<exec executable="C:\glassfish4\glassfish\bin\asadmin.bat">
+			<arg value="stop-domain" />
+			<arg value="domain1" />
+		</exec>
+	</target>
+	
+	<target name="startserver" depends="stopserver">
+		<echo message="Starting the server" />
+		<exec executable="C:\glassfish4\glassfish\bin\asadmin.bat">
+			<arg value="start-domain" />
+			<arg value="domain1" />
+		</exec>
+	</target>
+	
+	<target name="war" depends="build, startserver" >
+		<echo message="Building WAR file" />
+		<war destfile="${name}.war" index="true" webxml="WebContent/WEB-INF/web.xml">
+			<classes dir="${classes.dir}" />
+			<lib dir="${weblib.dir}" />
+			<lib dir="${db.dir}" includes="*.jar" />
+			<fileset dir="WebContent">
+				<include name="**/*.*" />
+			</fileset>
+		</war>
+		<copy todir="${gf.dir}" file="${name}.war" preservelastmodified="true"/>
+	</target>
+	
+	<target name="go">
+		<echo message="Choose option"/>
+	</target>
+	
+	
+</project>
