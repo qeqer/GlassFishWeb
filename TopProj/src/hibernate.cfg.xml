@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+  <session-factory>
+
+    <property name="hibernate.connection.url">jdbc:mysql://127.0.0.1:3306/mydb</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">root</property>
+    <property name="hibernate.show_sql">True</property>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+    <property name="hibernate.connection.pool_size">1</property>
+    <property name="current_session_context_class">thread</property>
+
+    <mapping class="kek.Booking"/>
+    <mapping class="kek.Client"/>
+	<mapping class="kek.Hall"/>
+	<mapping class="kek.Place_for_sell"/>
+	<mapping class="kek.Place"/>
+	<mapping class="kek.Scenario"/>
+	<mapping class="kek.Shows"/>
+	<mapping class="kek.Theater"/>
+	<mapping class="kek.Worker_in_show"/>
+	<mapping class="kek.Worker_in_theater"/>
+	<mapping class="kek.Worker"/>
+	
+	
+
+
+    
+  </session-factory>
+</hibernate-configuration>
